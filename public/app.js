@@ -11,6 +11,7 @@ const heightFtEl = document.getElementById('height-ft');
 const heightInEl = document.getElementById('height-in');
 
 const rafterOutEl = document.getElementById('rafter-out');
+const rafterTotalOutEl = document.getElementById('rafter-total-out');
 const stepWidthEl = document.getElementById('step-width');
 const stepRunEl = document.getElementById('step-run');
 const stepHeightEl = document.getElementById('step-height');
@@ -35,6 +36,34 @@ function inchesToFeetInches(totalInches) {
 
 function formatFtIn({ feet, inches }) {
   return `${feet} ft ${inches} in`;
+}
+
+function gcd(a, b) {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+// Round to nearest 1/16 in, return { wholeIn, num, denom } with fraction simplified.
+function toSixteenths(decimalInches) {
+  const sixteenths = Math.round(decimalInches * 16);
+  const wholeIn = Math.floor(sixteenths / 16);
+  const remainder = sixteenths % 16;
+  if (remainder === 0) return { wholeIn, num: 0, denom: 1 };
+  const g = gcd(remainder, 16);
+  return { wholeIn, num: remainder / g, denom: 16 / g };
+}
+
+function formatFtInFrac(decimalInches) {
+  const { wholeIn, num, denom } = toSixteenths(decimalInches);
+  const feet = Math.floor(wholeIn / 12);
+  const inches = wholeIn % 12;
+  const frac = num === 0 ? '' : ` ${num}/${denom}`;
+  return `${feet} ft ${inches}${frac} in`;
+}
+
+function formatTotalInFrac(decimalInches) {
+  const { wholeIn, num, denom } = toSixteenths(decimalInches);
+  const frac = num === 0 ? '' : ` ${num}/${denom}`;
+  return `${wholeIn}${frac} in`;
 }
 
 function showError(msg) {
@@ -81,13 +110,13 @@ form.addEventListener('submit', (e) => {
   const widthFtIn = inchesToFeetInches(widthTotalIn);
   const runFtIn = inchesToFeetInches(runIn);
   const heightFtIn = inchesToFeetInches(heightTotalIn);
-  const rafterFtIn = inchesToFeetInches(rafterIn);
 
-  rafterOutEl.textContent = formatFtIn(rafterFtIn);
+  rafterOutEl.textContent = formatFtInFrac(rafterIn);
+  rafterTotalOutEl.textContent = formatTotalInFrac(rafterIn);
   stepWidthEl.textContent = formatFtIn(widthFtIn);
   stepRunEl.textContent = formatFtIn(runFtIn);
   stepHeightEl.textContent = formatFtIn(heightFtIn);
-  stepFinalEl.textContent = formatFtIn(rafterFtIn);
+  stepFinalEl.textContent = formatFtInFrac(rafterIn);
 
   resultEl.classList.remove('hidden');
 });
