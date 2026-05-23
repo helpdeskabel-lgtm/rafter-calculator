@@ -1,0 +1,15 @@
+{
+  "name": "rafter-calculator",
+  "version": "1.0.0",
+  "description": "Simple roof rafter length calculator using the Pythagorean theorem.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

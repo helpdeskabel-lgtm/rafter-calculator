@@ -1,0 +1,100 @@
+// Rafter length calculator — pure right triangle: rafter = sqrt(run^2 + height^2)
+
+const form = document.getElementById('calc-form');
+const resetBtn = document.getElementById('reset');
+const errorEl = document.getElementById('error');
+const resultEl = document.getElementById('result');
+
+const widthFtEl = document.getElementById('width-ft');
+const widthInEl = document.getElementById('width-in');
+const heightFtEl = document.getElementById('height-ft');
+const heightInEl = document.getElementById('height-in');
+
+const rafterOutEl = document.getElementById('rafter-out');
+const stepWidthEl = document.getElementById('step-width');
+const stepRunEl = document.getElementById('step-run');
+const stepHeightEl = document.getElementById('step-height');
+const stepFinalEl = document.getElementById('step-final');
+
+function parseField(el) {
+  const raw = el.value.trim();
+  if (raw === '') return 0;
+  const n = Number(raw);
+  if (!Number.isFinite(n)) return NaN;
+  return n;
+}
+
+function toInches(feet, inches) {
+  return feet * 12 + inches;
+}
+
+function inchesToFeetInches(totalInches) {
+  const rounded = Math.round(totalInches);
+  return { feet: Math.floor(rounded / 12), inches: rounded % 12 };
+}
+
+function formatFtIn({ feet, inches }) {
+  return `${feet} ft ${inches} in`;
+}
+
+function showError(msg) {
+  errorEl.textContent = msg;
+  resultEl.classList.add('hidden');
+}
+
+function clearError() {
+  errorEl.textContent = '';
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  clearError();
+
+  const widthFt = parseField(widthFtEl);
+  const widthIn = parseField(widthInEl);
+  const heightFt = parseField(heightFtEl);
+  const heightIn = parseField(heightInEl);
+
+  if ([widthFt, widthIn, heightFt, heightIn].some((v) => Number.isNaN(v))) {
+    return showError('Please enter valid numbers only.');
+  }
+  if ([widthFt, widthIn, heightFt, heightIn].some((v) => v < 0)) {
+    return showError('Negative numbers are not allowed.');
+  }
+  if (widthIn > 11 || heightIn > 11) {
+    return showError('Inches must be between 0 and 11.');
+  }
+
+  const widthTotalIn = toInches(widthFt, widthIn);
+  const heightTotalIn = toInches(heightFt, heightIn);
+
+  if (widthTotalIn <= 0) {
+    return showError('Please enter a building width greater than zero.');
+  }
+  if (heightTotalIn <= 0) {
+    return showError('Please enter a rafter height greater than zero.');
+  }
+
+  const runIn = widthTotalIn / 2;
+  const rafterIn = Math.sqrt(runIn * runIn + heightTotalIn * heightTotalIn);
+
+  const widthFtIn = inchesToFeetInches(widthTotalIn);
+  const runFtIn = inchesToFeetInches(runIn);
+  const heightFtIn = inchesToFeetInches(heightTotalIn);
+  const rafterFtIn = inchesToFeetInches(rafterIn);
+
+  rafterOutEl.textContent = formatFtIn(rafterFtIn);
+  stepWidthEl.textContent = formatFtIn(widthFtIn);
+  stepRunEl.textContent = formatFtIn(runFtIn);
+  stepHeightEl.textContent = formatFtIn(heightFtIn);
+  stepFinalEl.textContent = formatFtIn(rafterFtIn);
+
+  resultEl.classList.remove('hidden');
+});
+
+resetBtn.addEventListener('click', () => {
+  form.reset();
+  clearError();
+  resultEl.classList.add('hidden');
+  widthFtEl.focus();
+});

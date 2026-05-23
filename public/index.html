@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rafter Length Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="card">
+    <header>
+      <h1>Rafter Length Calculator</h1>
+      <p class="subtitle">Simple right-triangle (Pythagorean) calculation</p>
+    </header>
+
+    <form id="calc-form" novalidate>
+      <fieldset>
+        <legend>Total Building Width</legend>
+        <div class="row">
+          <label>
+            Feet
+            <input type="number" id="width-ft" min="0" step="1" inputmode="numeric" placeholder="0" />
+          </label>
+          <label>
+            Inches
+            <input type="number" id="width-in" min="0" max="11" step="1" inputmode="numeric" placeholder="0" />
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Rafter Height (Rise)</legend>
+        <div class="row">
+          <label>
+            Feet
+            <input type="number" id="height-ft" min="0" step="1" inputmode="numeric" placeholder="0" />
+          </label>
+          <label>
+            Inches
+            <input type="number" id="height-in" min="0" max="11" step="1" inputmode="numeric" placeholder="0" />
+          </label>
+        </div>
+      </fieldset>
+
+      <div id="error" class="error" role="alert" aria-live="polite"></div>
+
+      <div class="buttons">
+        <button type="submit" class="primary">Calculate</button>
+        <button type="button" id="reset" class="secondary">Reset</button>
+      </div>
+    </form>
+
+    <section id="result" class="result hidden" aria-live="polite">
+      <h2>Result</h2>
+      <p class="rafter-length"><span class="label">Rafter length:</span> <span id="rafter-out">—</span></p>
+      <hr />
+      <dl class="steps">
+        <dt>Total width entered</dt><dd id="step-width">—</dd>
+        <dt>Half width (run)</dt><dd id="step-run">—</dd>
+        <dt>Rafter height</dt><dd id="step-height">—</dd>
+        <dt>Formula used</dt><dd id="step-formula">rafter = √(run² + height²)</dd>
+        <dt>Final rafter length</dt><dd id="step-final">—</dd>
+      </dl>
+    </section>
+
+    <footer>
+      <small>Ignores stud thickness, overhang, and pitch complexity.</small>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
